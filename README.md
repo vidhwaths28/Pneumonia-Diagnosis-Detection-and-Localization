@@ -2,119 +2,80 @@
 
 ## Team Members
 
-- Vidhwath S — PES2UG24AM182
-- Varun C H — PES2UG24AM180
+- Vidhwath S – PES2UG24AM182
+- Varun C H – PES2UG24AM180
 
----
+## Project Overview
 
-## 1. Project Overview
+This project develops a custom Convolutional Neural Network (CNN) for classifying chest X-ray images into Normal and Lung Opacity classes and provides weakly supervised localization of opacity regions.
 
-This project focuses on detecting Lung Opacity in chest X-ray images using a custom Convolutional Neural Network (CNN) and providing weakly supervised localization of the detected regions.
+The model is trained entirely from scratch without using pretrained models, ImageNet weights, or transfer learning.
 
-The classification model is trained entirely from scratch without using pretrained models, ImageNet weights, or transfer learning.
+Grad-CAM is used to generate class-discriminative heatmaps from the trained CNN. These heatmaps are converted into predicted bounding boxes and compared with ground-truth annotations using Intersection over Union (IoU).
 
-Grad-CAM is used to generate class-discriminative heatmaps from the trained CNN. These heatmaps are converted into predicted bounding boxes and compared with the ground-truth annotations using Intersection over Union (IoU).
+The project uses the RSNA Pneumonia Detection Challenge dataset.
 
-The project is based on the RSNA Pneumonia Detection Challenge dataset.
-
----
-
-## 2. Problem Statement
-
-Chest X-ray interpretation can be challenging because abnormal lung regions may vary considerably in size, shape, and location.
+## Problem Statement
 
 The objective of this project is to develop a machine learning system that:
 
 1. Classifies chest X-rays into Normal and Lung Opacity classes.
-2. Uses Grad-CAM to identify regions that contribute to the model's prediction.
-3. Converts the Grad-CAM activation maps into bounding boxes.
-4. Evaluates the overlap between predicted and ground-truth regions using IoU.
+2. Uses Grad-CAM to identify image regions contributing to the prediction.
+3. Converts Grad-CAM activation maps into bounding boxes.
+4. Evaluates predicted regions against ground-truth regions using IoU.
 
----
+## Dataset
 
-## 3. Dataset
+The RSNA Pneumonia Detection Challenge dataset contains chest X-ray images and corresponding annotations.
 
-The project uses the RSNA Pneumonia Detection Challenge dataset.
-
-The dataset contains chest X-ray images and annotations for lung opacity regions.
-
-For this implementation, a balanced subset of 2,000 images was selected:
+For this project, a balanced subset of 2,000 images was used:
 
 - 1,000 Normal images
 - 1,000 Lung Opacity images
 
-The dataset was divided into:
+The data was divided into:
 
-| Split | Number of Images |
-|---|---:|
-| Training | 1,400 |
-| Validation | 300 |
-| Test | 300 |
+- Training: 1,400 images
+- Validation: 300 images
+- Testing: 300 images
 
-Images classified as `No Lung Opacity / Not Normal` were excluded from the binary classification task.
+## Methodology
 
-Duplicate patient IDs were also removed before sampling the final dataset.
+The project consists of the following stages:
 
----
+1. Dataset preparation and preprocessing
+2. Custom CNN design
+3. Training from scratch
+4. Binary classification evaluation
+5. Grad-CAM generation
+6. Bounding-box localization
+7. IoU evaluation
+8. Grad-CAM threshold experimentation
 
-## 4. Data Preprocessing
+## Model
 
-The chest X-ray DICOM images were:
+A custom CNN with four convolutional layers was designed.
 
-- Loaded from the RSNA dataset.
-- Normalized to an intensity range of 0–255.
-- Converted from grayscale to RGB.
-- Resized to 224 × 224 pixels.
-- Normalized using mean = 0.5 and standard deviation = 0.5.
+Architecture:
 
-Training images additionally used:
-
-- Random horizontal flipping
-- Random rotation
-
-These augmentations were applied only to the training set.
-
----
-
-## 5. Model Architecture
-
-A custom CNN was designed and trained from scratch.
-
-The architecture consists of:
-
-- 4 convolutional layers
-- ReLU activation functions
-- Max-pooling layers
+- Conv2D: 3 → 32 channels
+- Conv2D: 32 → 64 channels
+- Conv2D: 64 → 128 channels
+- Conv2D: 128 → 256 channels
 - Global Average Pooling
 - Dropout
-- Fully connected classification layer
-
-The final layer produces two class outputs:
-
-- Normal
-- Lung Opacity
-
-No pretrained model or transfer learning was used.
-
----
-
-## 6. Model Training
+- Fully Connected classification layer
 
 The model was trained using:
 
-- Loss function: Cross-Entropy Loss
+- Loss: Cross Entropy Loss
 - Optimizer: Adam
 - Learning rate: 0.001
-- Batch size: 32
-- Number of epochs: 5
+- Epochs: 5
 
-The validation set was used to monitor model performance during training.
+## Results
 
----
-
-## 7. Classification Results
-
-The trained model was evaluated on the unseen test set.
+The final model achieved:
 
 | Metric | Result |
 |---|---:|
@@ -124,9 +85,7 @@ The trained model was evaluated on the unseen test set.
 | F1 Score | 79.35% |
 | ROC-AUC | 82.07% |
 
-### Confusion Matrix
-
-The test-set confusion matrix was:
+The confusion matrix was:
 
 ```text
 [[113, 37],
